@@ -140,29 +140,35 @@ const student = extractStudentDetails();
 const evaluator = new QuizEvaluator(student);
 const studentAnswers = extractStudentAnswers();
 
-document.querySelectorAll(".section-cntnr").forEach((section) => {
-  const sectionName = section
-    .querySelector(".section-lbl .bold")
-    .textContent.trim();
+if (Object.keys(answerKey).length === 0) {
+  console.warn("Answer key is empty. No evaluation will be performed.");
+} else {
+  document.querySelectorAll(".section-cntnr").forEach((section) => {
+    const sectionName = section
+      .querySelector(".section-lbl .bold")
+      .textContent.trim();
 
-  section.querySelectorAll(".menu-tbl").forEach((table) => {
-    const questionId = parseInt(
-      table.querySelector("tr:nth-child(2) td:nth-child(2)").textContent.trim(),
-      10
-    );
-    const chosenAnswer = studentAnswers[questionId] || 0;
-    const correctAnswer = answerKey[questionId] || 0;
+    section.querySelectorAll(".menu-tbl").forEach((table) => {
+      const questionId = parseInt(
+        table
+          .querySelector("tr:nth-child(2) td:nth-child(2)")
+          .textContent.trim(),
+        10
+      );
+      const chosenAnswer = studentAnswers[questionId] || 0;
+      const correctAnswer = answerKey[questionId] || 0;
 
-    evaluator.addQuestionToSection(
-      sectionName,
-      questionId,
-      correctAnswer,
-      chosenAnswer
-    );
+      evaluator.addQuestionToSection(
+        sectionName,
+        questionId,
+        correctAnswer,
+        chosenAnswer
+      );
+    });
   });
-});
 
-// Generate report and copy to clipboard
-const report = evaluator.generateReport();
-console.log(report);
-copyToClipboard(report);
+  // Generate report and copy to clipboard
+  const report = evaluator.generateReport();
+  console.log(report);
+  copyToClipboard(report);
+}
